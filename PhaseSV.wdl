@@ -10,8 +10,8 @@ workflow PhaseLongRead {
         String vcf_col_sv
         File outdir
         String outdirname = "results"
-        String jarFilURL="https://github.com/seanken/PhaseLongRead/raw/refs/heads/main/scripts/AlleleMASSeq.jar"
-        String pythonScriptURL="https://raw.githubusercontent.com/seanken/PhaseLongRead/refs/heads/main/scripts/combineVCF.py"
+        File jarFilURL="gs://fc-746adc43-182a-48d6-9cf2-602d748d47d8/TestPhase/AlleleMASSeq.jar"
+        File pythonScriptURL="gs://fc-746adc43-182a-48d6-9cf2-602d748d47d8/TestPhase/combineVCF.py"
     }
 
 
@@ -88,12 +88,11 @@ task PhasedReads{
     input{
         File bam
         File vcf
-        String jarFil
+        File jarFil
     }    
 
     command{
-        wget ~{jarFil}
-        java -jar AlleleMASSeq.jar ~{bam} ~{vcf} allele1.bam allele2.bam failed.bam
+        java -jar ~{jarFil} ~{bam} ~{vcf} allele1.bam allele2.bam failed.bam
     }
 
     output{
@@ -120,8 +119,7 @@ task CombineVCF{
     
     command{
         pip install pandas
-        wget ~{pythonScript}
-        python combineVCF.py ~{vcf1} ~{vcf2} comb.vcf
+        python ~{pythonScript} ~{vcf1} ~{vcf2} comb.vcf
     }
 
     output{
@@ -217,8 +215,8 @@ task PrepBAM{
 
     runtime{
         docker: "staphb/samtools:1.19"
-        memory: "40G"
-        disks: "local-disk 50 HDD"
+        memory: "50G"
+        disks: "local-disk 100 HDD"
         cpu: 1
     }
 }
@@ -241,8 +239,8 @@ task CallAlleleSV{
 
     runtime{
         docker: "us.gcr.io/broad-dsp-lrma/lr-sniffles2:2.0.6"
-        memory: "40G"
-        disks: "local-disk 50 HDD"
+        memory: "50G"
+        disks: "local-disk 100 HDD"
         cpu: 1
     }
 }
