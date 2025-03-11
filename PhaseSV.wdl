@@ -19,12 +19,14 @@ workflow PhaseLongRead {
     {
         input:
             vcf=snpVCF
+            vcf_col=vcf_col
     }
 
     call PrepVCF as PrepVCF_SV
     {
         input:
             vcf=svVCF
+            vcf_col=vcf_col_sv
     }
 
     call PhasedReads
@@ -139,6 +141,7 @@ task CombineVCF{
 task PrepVCF{
     input{
         File vcf
+        String vcf_col
     }
     ##bcftools sort ~{vcf} > input.sort.vcf
     ##bgzip -c input.sort.vcf > input.sort.vcf.gz
@@ -147,7 +150,9 @@ task PrepVCF{
     command{
         mkdir tmp
         bcftools sort ~{vcf} -T ./tmp -Oz -o input.sort.vcf.gz
+        echo Index
         bcftools index input.sort.vcf.gz
+        echo Sort
         bcftools view -H -O v -s $vcf_col input.sort.vcf.gz | grep -v "0/0" | grep -v "1/1" | grep -v "\\./\\."  > new.sv.vcf
   
     }
