@@ -4,7 +4,9 @@ version 1.0
 workflow PhaseLongRead {
     input{
         File snpVCF
+        File snpVCF_index
         File svVCF
+        File svVCF_index
         File bam
         String vcf_col
         String vcf_col_sv
@@ -135,15 +137,19 @@ task CombineVCF{
 }
 
 
+
 task PrepVCF{
     input{
         File vcf
     }
+    ##bcftools sort ~{vcf} > input.sort.vcf
+    ##bgzip -c input.sort.vcf > input.sort.vcf.gz
+    ##tabix -p vcf input.sort.vcf.gz
     
     command{
         bcftools sort ~{vcf} > input.sort.vcf
-        bgzip -c input.sort.vcf > input.sort.vcf.gz
-        tabix -p vcf input.sort.vcf.gz
+        bcftools view input.sort.vcf -Oz -o input.sort.vcf.gz
+        bcftools index input.sort.vcf.gz
         bcftools view -H -O v -s $vcf_col input.sort.vcf.gz | grep -v "0/0" | grep -v "1/1" | grep -v "\\./\\."  > new.sv.vcf
   
     }
