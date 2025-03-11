@@ -12,8 +12,8 @@ workflow PhaseLongRead {
         String outdirname = "results"
     }
 
-    jarFilURL=
-    pythonScriptURL=
+    jarFilURL="https://github.com/seanken/PhaseLongRead/raw/refs/heads/main/scripts/AlleleMASSeq.jar"
+    pythonScriptURL="https://raw.githubusercontent.com/seanken/PhaseLongRead/refs/heads/main/scripts/combineVCF.py"
 
     call PrepVCF as PrepVCF_SNP
     {
@@ -101,8 +101,8 @@ task PhasedReads{
     runtime{
         docker: "amazoncorretto:11"
         zones: "us-central1-b"
-        memory: "80G"
-        disks: "local-disk 100 HDD"
+        memory: "40G"
+        disks: "local-disk 50 HDD"
         cpu: 1
     }
 }
@@ -128,8 +128,8 @@ task CombineVCF{
     runtime{
         docker: "python:3"
         zones: "us-central1-b"
-        memory: "80G"
-        disks: "local-disk 100 HDD"
+        memory: "40G"
+        disks: "local-disk 50 HDD"
         cpu: 1
     }
 }
@@ -155,8 +155,8 @@ task PrepVCF{
     runtime{
         docker: "staphb/bcftools:1.11"
         zones: "us-central1-b"
-        memory: "80G"
-        disks: "local-disk 100 HDD"
+        memory: "40G"
+        disks: "local-disk 50 HDD"
         cpu: 1
     }
 }
@@ -179,8 +179,8 @@ task PrepBAM{
 
     runtime{
         docker: "staphb/samtools:1.19"
-        memory: "80G"
-        disks: "local-disk 100 HDD"
+        memory: "40G"
+        disks: "local-disk 50 HDD"
         cpu: 1
     }
 }
@@ -203,8 +203,8 @@ task CallAlleleSV{
 
     runtime{
         docker: "us.gcr.io/broad-dsp-lrma/lr-sniffles2:2.0.6"
-        memory: "80G"
-        disks: "local-disk 100 HDD"
+        memory: "40G"
+        disks: "local-disk 50 HDD"
         cpu: 1
     }
 }
