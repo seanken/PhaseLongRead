@@ -104,8 +104,8 @@ task PhasedReads{
     runtime{
         docker: "amazoncorretto:11"
         zones: "us-central1-b"
-        memory: "40G"
-        disks: "local-disk 50 HDD"
+        memory: "50G"
+        disks: "local-disk 100 HDD"
         cpu: 1
     }
 }
