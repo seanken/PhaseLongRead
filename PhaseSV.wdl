@@ -88,7 +88,7 @@ task PhasedReads{
     input{
         File bam
         File vcf
-        File jarFil
+        String jarFil
     }    
 
     command{
