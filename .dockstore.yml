@@ -1,5 +1,5 @@
 version: 1.2 # The .dockstore.yml schema version
-tools:
+workflows:
 - name: GenotypeForceCall
   subclass: wdl
-    primaryDescriptorPath: /PhaseSV.wdl
+  primaryDescriptorPath: /PhaseSV.wdl
