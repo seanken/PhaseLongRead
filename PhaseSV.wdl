@@ -4,9 +4,7 @@ version 1.0
 workflow PhaseLongRead {
     input{
         File snpVCF
-        File snpVCF_index
         File svVCF
-        File svVCF_index
         File bam
         String vcf_col
         String vcf_col_sv
