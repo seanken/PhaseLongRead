@@ -18,15 +18,16 @@ workflow PhaseLongRead {
     call PrepVCF as PrepVCF_SNP
     {
         input:
-            vcf=snpVCF
+            vcf=snpVCF,
             vcf_col=vcf_col
     }
 
     call PrepVCF as PrepVCF_SV
     {
         input:
-            vcf=svVCF
+            vcf=svVCF,
             vcf_col=vcf_col_sv
+
     }
 
     call PhasedReads
