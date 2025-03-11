@@ -145,8 +145,8 @@ task PrepVCF{
     ##tabix -p vcf input.sort.vcf.gz
     
     command{
-        bcftools sort ~{vcf} > input.sort.vcf
-        bcftools view input.sort.vcf -Oz -o input.sort.vcf.gz
+        mkdir tmp
+        bcftools sort ~{vcf} -T ./tmp -Oz -o input.sort.vcf.gz
         bcftools index input.sort.vcf.gz
         bcftools view -H -O v -s $vcf_col input.sort.vcf.gz | grep -v "0/0" | grep -v "1/1" | grep -v "\\./\\."  > new.sv.vcf
   
