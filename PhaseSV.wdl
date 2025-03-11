@@ -154,7 +154,7 @@ task PrepVCF{
         echo Index
         bcftools index input.sort.vcf.gz
         echo Sort
-        bcftools view -H -O v -s $vcf_col input.sort.vcf.gz | grep -v "0/0" | grep -v "1/1" | grep -v "\\./\\."  > new.sv.vcf
+        bcftools view -H -O v -s ~{vcf_col} input.sort.vcf.gz | grep -v "0/0" | grep -v "1/1" | grep -v "\\./\\."  > new.sv.vcf
   
     }
 
