@@ -15,7 +15,7 @@ workflow PhaseLongRead {
     }
 
 
-    call PrepVCF as PrepVCF_SNP
+    call PrepVCF_GZ as PrepVCF_SNP
     {
         input:
             vcf=snpVCF,
@@ -167,6 +167,34 @@ task PrepVCF{
         zones: "us-central1-b"
         memory: "40G"
         disks: "local-disk 50 HDD"
+        cpu: 1
+    }
+}
+
+task PrepVCF_GZ{
+    input{
+        File vcf
+        String vcf_col
+    }
+    ##bcftools sort ~{vcf} > input.sort.vcf
+    ##bgzip -c input.sort.vcf > input.sort.vcf.gz
+    ##tabix -p vcf input.sort.vcf.gz
+    
+    command{
+        bcftools index ~{vcf}
+        bcftools view -H -O v -s ~{vcf_col} ~{vcf} | grep -v "0/0" | grep -v "1/1" | grep -v "\\./\\."  > new.sv.vcf
+  
+    }
+
+    output{
+        File newVCF="new.sv.vcf"
+    }
+
+    runtime{
+        docker: "staphb/bcftools:1.11"
+        zones: "us-central1-b"
+        memory: "80G"
+        disks: "local-disk 100 HDD"
         cpu: 1
     }
 }
