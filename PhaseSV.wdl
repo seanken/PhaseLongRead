@@ -10,10 +10,10 @@ workflow PhaseLongRead {
         String vcf_col_sv
         File outdir
         String outdirname = "results"
+        String jarFilURL="https://github.com/seanken/PhaseLongRead/raw/refs/heads/main/scripts/AlleleMASSeq.jar"
+        String pythonScriptURL="https://raw.githubusercontent.com/seanken/PhaseLongRead/refs/heads/main/scripts/combineVCF.py"
     }
 
-    jarFilURL="https://github.com/seanken/PhaseLongRead/raw/refs/heads/main/scripts/AlleleMASSeq.jar"
-    pythonScriptURL="https://raw.githubusercontent.com/seanken/PhaseLongRead/refs/heads/main/scripts/combineVCF.py"
 
     call PrepVCF as PrepVCF_SNP
     {
