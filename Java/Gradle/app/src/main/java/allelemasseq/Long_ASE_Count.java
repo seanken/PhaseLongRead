@@ -15,7 +15,7 @@ public class Long_ASE_Count
 
     protected SAMFileWriter savFil1, savFil2, savFil3;
     protected File bamFile, outBam1, outBam2, outBam3;
-    protected HashMap<String, Boolean> map;
+    protected HashMap<SNPVal, Boolean> map;
     protected HashMap<Integer, Boolean> posMap;
     //protected HashMap<String, String> UMIMap;
     protected HashMap<String,Integer> counts;
@@ -106,7 +106,7 @@ public class Long_ASE_Count
      
         Scanner sc = new Scanner(vcfFile); 
 
-        HashMap<String,Boolean> vcfMap=new HashMap<String,Boolean>();
+        HashMap<SNPVal,Boolean> vcfMap=new HashMap<SNPVal,Boolean>();
         this.posMap=new HashMap<Integer,Boolean>();
 
         int iter=0;
@@ -143,16 +143,16 @@ public class Long_ASE_Count
                 continue;
             }
                 
-
+            int posInt=Integer.parseInt(pos);
             chrom=chrom.replace("chr","");
 
-            String key1=chrom+"_"+pos+"_"+ref;
-            String key2=chrom+"_"+pos+"_"+alt;
+            SNPVal key1=new SNPVal(posInt,chrom,ref.charAt(0));
+            SNPVal key2=new SNPVal(posInt,chrom,alt.charAt(0));
 
             Boolean val1=true;
             Boolean val2=false;
 
-            int posInt=Integer.parseInt(pos);
+            //int posInt=Integer.parseInt(pos);
 
             if(geno.equals("0|1") || geno.equals("0/1"))
             {
@@ -240,11 +240,12 @@ public class Long_ASE_Count
             }
 
 
-            String base=Character.toString(seq.charAt(i));
+            //String base=Character.toString(seq.charAt(i));
+            //String base=Character.toString(seq.charAt(i));
+            char base=seq.charAt(i);
 
-
-            String key=chrom+"_"+Integer.toString(pos)+"_"+base;
-
+            //String key=chrom+"_"+Integer.toString(pos)+"_"+base;
+            SNPVal key=new SNPVal(pos,chrom,base);
 
 
             if(this.map.containsKey(key))
