@@ -103,7 +103,7 @@ task PhasedReads{
     runtime{
         docker: "amazoncorretto:11"
         zones: "us-central1-b"
-        memory: "50G"
+        memory: "20G"
         disks: "local-disk 100 HDD"
         cpu: 1
     }
@@ -129,7 +129,7 @@ task CombineVCF{
     runtime{
         docker: "python:3"
         zones: "us-central1-b"
-        memory: "40G"
+        memory: "20G"
         disks: "local-disk 50 HDD"
         cpu: 1
     }
@@ -191,7 +191,7 @@ task PrepVCF_GZ{
     runtime{
         docker: "staphb/bcftools:1.11"
         zones: "us-central1-b"
-        memory: "80G"
+        memory: "40G"
         disks: "local-disk 100 HDD"
         cpu: 1
     }

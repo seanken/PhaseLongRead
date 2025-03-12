@@ -16,6 +16,7 @@ public class Long_ASE_Count
     protected SAMFileWriter savFil1, savFil2, savFil3;
     protected File bamFile, outBam1, outBam2, outBam3;
     protected HashMap<String, Boolean> map;
+    protected HashMap<Integer, Boolean> posMap;
     //protected HashMap<String, String> UMIMap;
     protected HashMap<String,Integer> counts;
     protected int Good;
@@ -43,7 +44,8 @@ public class Long_ASE_Count
 
         print("Create VCF HashMap");
 
-        this.map= HashMapVCF(vcfFile,ind);
+        //this.map= 
+        HashMapVCF(vcfFile,ind);
         System.out.println(this.map.size());
     }
 
@@ -79,7 +81,7 @@ public class Long_ASE_Count
 
             try{
                 SAMRecord read=r.next();
-                this.ProcessRead(read);
+                this.ProcessRead(read,iter);
             }catch(Exception e){
                 print("Yuck");
                 break;
@@ -98,13 +100,14 @@ public class Long_ASE_Count
 
 
 
-    public static HashMap<String,Boolean> HashMapVCF(File vcfFile,int ind) throws Exception
+    public void HashMapVCF(File vcfFile,int ind) throws Exception
     {
 
      
         Scanner sc = new Scanner(vcfFile); 
 
         HashMap<String,Boolean> vcfMap=new HashMap<String,Boolean>();
+        this.posMap=new HashMap<Integer,Boolean>();
 
         int iter=0;
 
@@ -149,10 +152,13 @@ public class Long_ASE_Count
             Boolean val1=true;
             Boolean val2=false;
 
+            int posInt=Integer.parseInt(pos);
+
             if(geno.equals("0|1") || geno.equals("0/1"))
             {
                 vcfMap.put(key1,val1);
                 vcfMap.put(key2,val2);
+                this.posMap.put(posInt,val1);
             }
 
 
@@ -169,18 +175,21 @@ public class Long_ASE_Count
             {
                 vcfMap.put(key1,val2);
                 vcfMap.put(key2,val1);
+                this.posMap.put(posInt,val1);
             }
 
 
         }
 
-        return(vcfMap);
+        this.map=vcfMap;
+
+        //return(vcfMap);
 
     }
 
 
 
-    public void ProcessRead(SAMRecord read)
+    public void ProcessRead(SAMRecord read,int inter)
     {
         String seq=read.getReadString();
 
@@ -205,14 +214,30 @@ public class Long_ASE_Count
         int All1=0;
         int All2=0;
 
+        int[] posLst=getPosition(read,readLen,start);
 
         for(int i=0;i<readLen;i=i+1)
         {
 
-            int pos=read.getReferencePositionAtReadPosition(i+1);
+            //int pos=read.getReferencePositionAtReadPosition(i+1);
+            int pos=posLst[i];
             //pos=pos;
+            //Just to double check our code
+            if(inter<20)
+            {
+                int pos2=read.getReferencePositionAtReadPosition(i+1);
+                if(pos!=pos2)
+                {
+                    print("Error with positon!");
+                }
+            }
 
             if(pos<1){continue;}
+
+            if(!this.posMap.containsKey(pos))
+            {
+                continue;
+            }
 
 
             String base=Character.toString(seq.charAt(i));
@@ -288,11 +313,46 @@ public class Long_ASE_Count
 
 
 
+    //Gets an array with position information (use this to speed up process)
+    public static int[] getPosition(SAMRecord read,int readLen,int start) //throws Exception
+    {
+        int curPosRead=0;
+        int curPosRef=start;
+        int[] posLst=new int[readLen];
+        List<CigarElement> cigar=read.getCigar().getCigarElements();
+        for (int i = 0; i < cigar.size(); i++) {
+            int len=cigar.get(i).getLength();
+            CigarOperator op=cigar.get(i).getOperator();
+            if(op.consumesReadBases() && op.consumesReferenceBases())
+            {
+                for(int j=0;j<len;j++)
+                {
+                    posLst[curPosRead]=curPosRef;
+                    curPosRead=curPosRead+1;
+                    curPosRef=curPosRef+1;
+                }
+            }
+            else if(op.consumesReadBases())
+            {
+                for(int j=0;j<len;j++)
+                {
+                    posLst[curPosRead]=0;
+                    curPosRead=curPosRead+1;
+                }
+            }
+            else if(op.consumesReferenceBases())
+            {
+                curPosRef=curPosRef+len;
+            }
+        }
+
+        return(posLst);
+        
+    }
 
 
     public static HashMap<String,Integer> HashMapVCF_SV(File vcfFile,int ind) throws Exception
     {
-
      
         Scanner sc = new Scanner(vcfFile); 
 
