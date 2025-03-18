@@ -22,7 +22,7 @@ workflow PhaseLongRead {
             vcf_col=vcf_col
     }
 
-    call PrepVCF as PrepVCF_SV
+    call PrepVCF_GZ as PrepVCF_SV
     {
         input:
             vcf=svVCF,
@@ -241,6 +241,5 @@ task CallAlleleSV{
         docker: "us.gcr.io/broad-dsp-lrma/lr-sniffles2:2.0.6"
         memory: "50G"
         disks: "local-disk 100 HDD"
-        cpu: 1
     }
 }
