@@ -77,6 +77,8 @@ workflow PhaseLongRead {
 
     output{
         File combinedVCF=CombineVCF.phased_vcf
+        File Allele1VCF=CallAlleleOneSV.allele_vcf
+        File Allele2VCF=CallAlleleTwoSV.allele_vcf
     }
 
 
